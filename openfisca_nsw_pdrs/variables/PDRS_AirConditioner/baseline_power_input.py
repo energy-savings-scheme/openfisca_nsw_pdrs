@@ -96,8 +96,6 @@ class PDRS__Air_Conditioner__baseline_power_input(Variable):
         "activity-name":"Installation or Replacement of an Air Conditioner"
         }
 
-
-
     def formula(building, period, parameters):
         cooling_capacity = building('PDRS__Air_Conditioner__cooling_capacity', period)
 
@@ -124,3 +122,72 @@ class PDRS__Air_Conditioner__baseline_power_input(Variable):
         scale = baseline_unit[AC_type]
 
         return scale[cooling_capacity_enum]*cooling_capacity
+
+
+class SONA__electricity_savings(Variable):
+    value_type = float
+    entity = Building
+    label = 'The deemed electricity savings under the SONA deemed method'
+    reference = "https://environment.nsw.gov.au/ABCD/foo/bar"
+    definition_period=ETERNITY
+    metadata={
+              "alias": "SONA electricity savings",
+              "is_output": True,
+              "clause": "9.3",
+              "method": "SONA",
+              "notes": ["For the purposes of clause 5.3(a), End-User-Equipment under clause 9.3 \
+                            is deemed to be installed upon its sale.",
+                        "For the purposes of clause 6.8, the Site of the Implementation is the \
+                            Address referred to in clause 9.3.1 (d) of this Rule",
+                        "The Implementation Date is the date that the End-User Equipment was sold.",
+                        "The Energy Saver is the Appliance Retailer who sells the End-User Equipment to a Purchaser."
+                        ]
+              }
+
+    def formula(building, period, parameters):
+        SONA__meets_eligibility_requirements = building('SONA__meets_eligibility_requirements', period)
+        
+        eue_activity = building('SONA__eue_activity', period)
+        EUE_Activity = eue_activity.possible_values
+
+        regional_network_factor = building('regional_network_factor', period)
+        
+        return np.select(
+                        [SONA__meets_eligibility_requirements * (eue_activity == EUE_Activity.B1),
+                         SONA__meets_eligibility_requirements * (eue_activity == EUE_Activity.B2),
+                         SONA__meets_eligibility_requirements * (eue_activity == EUE_Activity.B3),
+                         ...,
+                        ], 
+                        [building('SONA__electricity_savings_B1', period) * regional_network_factor,
+                         building('SONA__electricity_savings_B2', period) * regional_network_factor,
+                         building('SONA__electricity_savings_B3', period) * regional_network_factor,
+                         ...,
+                        ]
+                        )
+
+    # def formula__bad(building, period, parameters):
+    #     # BAD Example
+
+    #     regional_network_factor = building('regional_network_factor', period)
+    #     SONA__electricity_savings_B1 = building('SONA__electricity_savings_B1', period) * regional_network_factor
+    #     SONA__electricity_savings_B2 = building('SONA__electricity_savings_B2', period) * regional_network_factor
+    #     SONA__electricity_savings_B3 = building('SONA__electricity_savings_B3', period) * regional_network_factor
+    #     SONA__electricity_savings_B4 = building('SONA__electricity_savings_B4', period) * regional_network_factor
+
+    #     eue_activity = building('SONA__eue_activity', period)
+    #     SONA__meets_eligibility_requirements = building('SONA__meets_eligibility_requirements', period)
+                
+    #     if eue_activity == "Activity_B1" and SONA__meets_eligibility_requirements:
+    #         return SONA__electricity_savings_B1
+
+    #     elif eue_activity == "Activity_B2" and SONA__meets_eligibility_requirements:
+    #         return SONA__electricity_savings_B2
+
+    #     elif eue_activity == "Activity_B3" and SONA__meets_eligibility_requirements:
+    #         return SONA__electricity_savings_B3
+
+    #     elif ... 
+    #         etc...
+
+    #     else:
+    #         return np.array(0)
