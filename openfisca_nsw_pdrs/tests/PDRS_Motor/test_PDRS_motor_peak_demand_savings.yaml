@@ -18,6 +18,8 @@
   period: 2021
   absolute_error_margin: 1
   input:
+      PDRS__motors__number_of_poles:
+          [poles_2, poles_2, poles_2, poles_2, poles_2, poles_2]
       PDRS__motors__rated_output: [2.9, 11, 28, 50, 90, 185]
   output:
       PDRS__motors__baseline_motor_efficiency:
