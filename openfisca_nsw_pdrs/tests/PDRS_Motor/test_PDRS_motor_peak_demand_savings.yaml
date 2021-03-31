@@ -18,6 +18,7 @@
   period: 2021
   absolute_error_margin: 1
   input:
-      PDRS__motors__rated_output: [11, 50, 110]
+      PDRS__motors__rated_output: [2.9, 11, 28, 50, 90, 185]
   output:
-      PDRS__motors__baseline_motor_efficiency: [89.4, 89.4, 94.3]
+      PDRS__motors__baseline_motor_efficiency:
+          [84.425, 89.4, 91.825, 93.05, 94.1, 0.]

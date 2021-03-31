@@ -1,18 +1,98 @@
 description: The Baseline motor efficiency (%) table for the PDRS-motors method  Left=<kW<Right, 2 poles
-reference: "ESS F7.3"
-metadata:
-    type: single_amount
-    threshold_unit: percentage
-brackets:
-    - amount:
-          2021-01-01:
-              value: 94.3
-      threshold:
-          2021-01-01:
-              value: 110
-    - amount:
-          2021-01-01:
-              value: 89.4
-      threshold:
-          2021-01-01:
-              value: 11
+reference: "ESS F7.3, year 2000 is dummy date, but need to make sure corresponding values with the same date, the output is arranged by descending date"
+rated_output:
+    values:
+        2021-01-01:
+            value: 0.73
+        2000-12-31:
+            value: 0.75
+        2000-12-30:
+            value: 1.1
+        2000-12-29:
+            value: 1.5
+        2000-12-28:
+            value: 2.2
+        2000-12-27:
+            value: 3
+        2000-12-26:
+            value: 4
+        2000-12-25:
+            value: 5.5
+        2000-12-24:
+            value: 7.5
+        2000-12-23:
+            value: 11
+        2000-12-22:
+            value: 15
+        2000-12-21:
+            value: 18.5
+        2000-12-20:
+            value: 22
+        2000-12-19:
+            value: 30
+        2000-12-18:
+            value: 37
+        2000-12-17:
+            value: 45
+        2000-12-16:
+            value: 55
+        2000-12-15:
+            value: 75
+        2000-12-14:
+            value: 90
+        2000-12-13:
+            value: 110
+        2000-12-12:
+            value: 132
+        2000-12-11:
+            value: 150
+        2000-12-10:
+            value: 185
+2poles:
+    values:
+        2021-01-01:
+            value: 77.4
+        2000-12-31:
+            value: 77.4
+        2000-12-30:
+            value: 79.6
+        2000-12-29:
+            value: 81.3
+        2000-12-28:
+            value: 83.2
+        2000-12-27:
+            value: 84.6
+        2000-12-26:
+            value: 85.8
+        2000-12-25:
+            value: 87.0
+        2000-12-24:
+            value: 88.1
+        2000-12-23:
+            value: 89.4
+        2000-12-22:
+            value: 90.3
+        2000-12-21:
+            value: 90.9
+        2000-12-20:
+            value: 91.3
+        2000-12-19:
+            value: 92.0
+        2000-12-18:
+            value: 92.5
+        2000-12-17:
+            value: 92.9
+        2000-12-16:
+            value: 93.2
+        2000-12-15:
+            value: 93.8
+        2000-12-14:
+            value: 94.1
+        2000-12-13:
+            value: 94.3
+        2000-12-12:
+            value: 94.6
+        2000-12-11:
+            value: 94.8
+        2000-12-10:
+            value: 95.0
