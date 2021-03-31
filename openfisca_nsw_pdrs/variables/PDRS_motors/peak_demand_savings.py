@@ -78,7 +78,7 @@ class PDRS__motors__baseline_motor_efficiency(Variable):
         baselineEfficiencyMatrix = []
         for item in poles_str_list:
             baselineEfficiency = []
-            for parameterAtInstance in data.children[poles_str_list[0]].values_list:
+            for parameterAtInstance in data.children[item].values_list:
                 baselineEfficiency.append(parameterAtInstance.value)
 
             baselineEfficiencyMatrix.append(baselineEfficiency)
@@ -91,7 +91,6 @@ class PDRS__motors__baseline_motor_efficiency(Variable):
         delta_y = np.delete(baselineEfficiency, 0) - baselineEfficiency[:-1]
         delta_x = np.delete(output_threshold,0)-output_threshold[:-1]
         gradient_matrix = delta_y_matrix/delta_x
-        print(gradient_matrix.shape)
         x_zip = zip(range(len(output_threshold)-1),output_threshold[:-1], np.delete(output_threshold,0))
 
         #find out which bracket does the user input belong to
