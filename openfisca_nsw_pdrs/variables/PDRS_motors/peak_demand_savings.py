@@ -29,9 +29,33 @@ class PDRS__motors__number_of_poles(Variable):
     }
 
 
+class PDRS__motors__new_efficiency(Variable):
+    entity=Building
+    value_type=float
+    definition_period=ETERNITY
+    reference="Clause **"
+    label="What is the efficiency of the new motor as %, as found in the GEMS Registry?"
+    metadata={
+        "variable-type": "input",
+        "alias" :"Efficiency (%) of The New Motor",
+        "activity-group":"High Efficiency Appliances for Business",
+        "activity-name":"Replace a new high efficiency Motor (Refrigerations or Ventillations)"
+        }
 
+class PDRS__motors__old_efficiency(Variable):
+    entity=Building
+    value_type=float
+    definition_period=ETERNITY
+    reference="Clause **"
+    label="What is the efficiency of your existing motor to be replaced , as found in the GEMS Registry?"
+    metadata={
+        "variable-type": "input",
+        "alias" :"Efficiency (%) of The New Motor",
+        "activity-group":"High Efficiency Appliances for Business",
+        "activity-name":"Replace a new high efficiency Motor (Refrigerations or Ventillations)"
+        }
 
-class PDRS__motors__rated_output(Variable):
+class PDRS__motors__new_motor_rated_output(Variable):
     entity=Building
     value_type=float
     definition_period=ETERNITY
@@ -59,15 +83,12 @@ class PDRS__motors__baseline_motor_efficiency(Variable):
         }
 
     def formula(building, period, parameters):
-        rated_output = building('PDRS__motors__rated_output', period)
+        rated_output = building('PDRS__motors__new_motor_rated_output', period)
         poles = building('PDRS__motors__number_of_poles', period)
         #access the thresholds and amounts in parameters
         data = load_parameter_file("openfisca_nsw_pdrs/parameters/motors/motors_baseline_efficiency_table.yaml")
 
         output_threshold = []
-
-
-
         poles_str_list = poles.decode_to_str()
 
         # prison break for parameters
@@ -95,7 +116,6 @@ class PDRS__motors__baseline_motor_efficiency(Variable):
 
         #find out which bracket does the user input belong to
         condList = []
-
         for (index, z1, z2) in x_zip:
             bracket_pos=(rated_output >= z1) * (rated_output < z2)
             condList.append(bracket_pos)
@@ -127,8 +147,16 @@ class PDRS__motors__peak_demand_savings(Variable):
         }
 
     def formula(building, period, parameters):
-        rated_output = building('PDRS__motors__rated_output', period)
+        rated_output = building('PDRS__motors__new_motor_rated_output', period)
+        new_efficiency = building('PDRS__motors__new_efficiency', period)
+        old_efficiency = building('PDRS__motors__old_efficiency', period)
+        firmness = building('PDRS__motors__firmness_factor', period)
+        daily_window = parameters(period).PDRS_wide_constants.DAILY_PEAK_WINDOW_HOURS
+
+
         asset_life_table=parameters(period).motors.motors_asset_life_table
         forward_creation_period=asset_life_table.calc(rated_output, right=False)
 
-        return forward_creation_period
+
+        return rated_output * (new_efficiency - old_efficiency)/100 * firmness*daily_window * forward_creation_period
+

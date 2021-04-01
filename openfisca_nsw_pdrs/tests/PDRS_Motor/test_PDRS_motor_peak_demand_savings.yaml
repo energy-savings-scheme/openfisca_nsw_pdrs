@@ -6,21 +6,42 @@
 #   output:
 #       PDRS__motors__peak_demand_savings: [0, 12, 15, 20, 22, 25, 0]
 
-- name: test PDRS motors peak demand savings-inner values
-  period: 2021
-  absolute_error_margin: 0.005
-  input:
-      PDRS__motors__rated_output: [0.21, 0.83, 2.7, 9.3, 42, 101, 186]
-  output:
-      PDRS__motors__peak_demand_savings: [0, 12, 15, 20, 22, 25, 0]
+#----------------------------------------------
+# Motor methods: note to Yuguang
+#TODO (1)dealing with old efficiency and baseline lookup
+#TODO (2) boundary issues in asset life table look up --check source code
+#----------------------------------------------
 
-- name: test PDRS motors baseline motor efficiency
+- name: test PDRS motors peak demand savings-Steve's test data
+  period: 2021
+  absolute_error_margin: 1
+  input:
+      PDRS__motors__motor_type:
+          [
+              ventilation,
+              refrigeration,
+              refrigeration,
+              ventilation,
+              ventilation,
+              refrigeration,
+              ventilation,
+          ]
+      PDRS__motors__new_motor_rated_output: [1.1, 4, 7.5, 18.5, 55, 75, 168]
+      PDRS__motors__new_efficiency: [86, 89, 90, 93, 95, 95, 96]
+      PDRS__motors__old_efficiency: [81, 87, 88, 91, 94, 94, 95]
+  output:
+      PDRS__motors__firmness_factor:
+          [0.1344, 0.33, 0.33, 0.1344, 0.1344, 0.33, 0.1344]
+      PDRS__motors__peak_demand_savings:
+          [0.422136, 2.7324, 4.0095, 6.3492, 15.1008, 32.67, 29.39040468]
+
+- name: test PDRS motors baseline motor efficiency(linear interpolation)--my data
   period: 2021
   absolute_error_margin: 1
   input:
       PDRS__motors__number_of_poles:
           [poles_2, poles_4, poles_6, poles_8, poles_4, poles_2]
-      PDRS__motors__rated_output: [2.9, 11, 28, 50, 90, 185]
+      PDRS__motors__new_motor_rated_output: [2.9, 11, 28, 50, 90, 185]
   output:
       PDRS__motors__baseline_motor_efficiency:
           [84.425, 89.8, 91.5, 90.85, 94.2, 0.]
