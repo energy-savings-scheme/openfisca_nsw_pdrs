@@ -54,6 +54,7 @@ class PDRS__motors__peak_demand_savings(Variable):
         daily_window = parameters(period).PDRS_wide_constants.DAILY_PEAK_WINDOW_HOURS
         asset_life_table=parameters(period).motors.motors_asset_life_table
         forward_creation_period=asset_life_table.calc(rated_output, right=False)
+       
 
         return rated_output * (new_efficiency - existing_efficiency)/100 * firmness*daily_window * forward_creation_period
 
