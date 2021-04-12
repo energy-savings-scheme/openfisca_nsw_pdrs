@@ -58,11 +58,16 @@ class PDRS__motors__baseline_motor_efficiency(Variable):
         "activity-name":"Replace a new high efficiency Motor (Refrigerations or Ventillations)"
         }
 
-    def formula(building, period):
+    def formula(building, period, parameters):
         rated_output = building('PDRS__motors__new_motor_rated_output', period)
         poles = building('PDRS__motors__number_of_poles', period)
+
+        # node = parameters(period).motors.motors_baseline_efficiency_table
+
+        # node[poles]
+
         #access the thresholds and amounts in parameters
-        data = load_parameter_file("openfisca_nsw_pdrs/parameters/motors/motors_baseline_efficiency_table.yaml")
+        data = load_parameter_file("openfisca_nsw_pdrs/parameters/motors/motors_baseline_efficiency_table_SS.yaml")
 
         output_threshold = []
         poles_str_list = poles.decode_to_str()
