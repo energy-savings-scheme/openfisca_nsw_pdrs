@@ -17,7 +17,7 @@ class PDRS__ROOA__firmness_factor(Variable):
     }
 
     def formula(building, period, parameters):
-        load_factor = parameters(period).ROOA_fridge.ROOA_load_factors_table
+        load_factor = parameters(period).ROOA_fridge.ROOA_related_constants.LOAD_FACTOR
         contribution_factor = parameters(period).PDRS_wide_constants.CONTRIBUTION_FACTOR
         duration_factor = parameters(period).ROOA_fridge.ROOA_related_constants.DURATION_FACTOR
         return contribution_factor*load_factor*duration_factor

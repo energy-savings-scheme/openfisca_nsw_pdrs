@@ -2,9 +2,8 @@
   period: 2021
   absolute_error_margin: 0.005
   output:
-      PDRS__ROOA__firmness_factor: [0.680]
-      PDRS__ROOA__peak_demand_savings: [2.999]
+      PDRS__ROOA__peak_demand_savings: [2.655]
 # Note to Yuguang:
-#TODO: 1. check formula about average summer demand
 # TODO: 2. check if it is only for fridge
 # TODO: 3. check the numbers in test data
+
