@@ -62,49 +62,26 @@ class PDRS__motors__baseline_motor_efficiency(Variable):
         rated_output = building('PDRS__motors__new_motor_rated_output', period)
         poles = building('PDRS__motors__number_of_poles', period)
 
-        # node = parameters(period).motors.motors_baseline_efficiency_table
+        node = parameters(period).motors.motors_baseline_efficiency_table
 
-        # node[poles]
+        # Here we fetch value for each "pole_#" node
+        # NOTE - this is a hacky workaround required because 'fancy indexing' doesn't work on SingleAmountTaxScales
+        # See more at <https://openfisca.org/doc/coding-the-legislation/legislation_parameters#computing-a-parameter-that-depends-on-a-variable-fancy-indexing>
 
-        #access the thresholds and amounts in parameters
-        data = load_parameter_file("openfisca_nsw_pdrs/parameters/motors/motors_baseline_efficiency_table_SS.yaml")
+        # NOTE (Ram) - The `interpolate=True` keyword argument is functionality I've newly added to openfisca-core
+        poles_2_value = node["poles_2"].rated_output.calc(rated_output, interpolate=True)
+        poles_4_value = node["poles_4"].rated_output.calc(rated_output, interpolate=True)
+        poles_6_value = node["poles_6"].rated_output.calc(rated_output, interpolate=True)
+        poles_8_value = node["poles_8"].rated_output.calc(rated_output, interpolate=True)
 
-        output_threshold = []
-        poles_str_list = poles.decode_to_str()
-        # prison break for parameters
-        for parameterAtInstance in data.children['rated_output'].values_list:
-            output_threshold.append(parameterAtInstance.value)
+        baseline_motor_efficiency = np.select([poles == PDRS__motors__number_of_poles.possible_values.poles_2,
+                          poles == PDRS__motors__number_of_poles.possible_values.poles_4,
+                          poles == PDRS__motors__number_of_poles.possible_values.poles_6,
+                          poles == PDRS__motors__number_of_poles.possible_values.poles_8,
+                         ],
+                         [poles_2_value, poles_4_value, poles_6_value, poles_8_value], 0)
 
-        #this should be a matrix now with each poles value
-        baselineEfficiencyMatrix = []
-        for item in poles_str_list:
-            baselineEfficiency = []
-            for parameterAtInstance in data.children[item].values_list:
-                baselineEfficiency.append(parameterAtInstance.value)
-
-            baselineEfficiencyMatrix.append(baselineEfficiency)
-
-        baseline_nparray = np.array(baselineEfficiencyMatrix)
-
-        #compute gradients
-        delta_y_matrix = (baseline_nparray[:, 1:]-baseline_nparray[:, :-1])
-        delta_x = np.delete(output_threshold,0)-output_threshold[:-1]
-        gradient_matrix = delta_y_matrix/delta_x
-        x_zip = zip(range(len(output_threshold)-1),output_threshold[:-1], np.delete(output_threshold,0))
-
-        #find out which bracket does the user input belong to
-        condList = []
-        for (index, z1, z2) in x_zip:
-            bracket_pos=(rated_output >= z1) * (rated_output < z2)
-            condList.append(bracket_pos)
-
-        x_lowerbound = np.select(np.array(condList), output_threshold[:-1])
-        y_minus = np.select(np.array(condList), baseline_nparray[:, :-1].T)
-        gradient_selected = np.select(np.array(condList), gradient_matrix.T)
-
-
-        return y_minus + gradient_selected*(rated_output-x_lowerbound)
-
+        return baseline_motor_efficiency
 
 
 class PDRS__motors__existing_motor_efficiency(Variable):
